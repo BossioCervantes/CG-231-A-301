@@ -9,9 +9,9 @@ var scene = new THREE.Scene();
 
 // Variables para la Grilla y Flechas
 
-var size = 20;
-var arrowSize = 5;
-var divisions = 20;
+var size = 1000;
+var arrowSize = 1000;
+var divisions = 1000;
 var origin = new THREE.Vector3( 0, 0, 0 );
 var x = new THREE.Vector3( 1, 0, 0 );
 var y = new THREE.Vector3( 0, 1, 0 );
@@ -32,9 +32,9 @@ var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB );
 // Posición de la camara
 
 var camera = new THREE.PerspectiveCamera(70, WIDTH / HEIGHT);
-camera.position.x = 5;
-camera.position.y = 2;
-camera.position.z = 3;
+camera.position.x = 0;
+camera.position.y = 5;
+camera.position.z = 10;
 scene.add(camera);
 const light = new THREE.AmbientLight(0x404040, 5);
 scene.add(light);
@@ -47,39 +47,66 @@ scene.add(arrowY);
 scene.add(arrowZ);
 
 //Variables de Color para el arreglo en cada cubo
-const color = [{color:0x00008b}, {color:0x0000FF},{color:0x00FFFF}];
+const color = [{color:0x0000FF}, {color:0x0FFFFF}];
 
 // Función Cubo donde base, altura y ancho son equivalentes al lado del cubo
 function cubo(base, altura, ancho, col) {
   const geometry = new THREE.BoxGeometry(base, altura, ancho);
-  // Se crea un arreglo con los materiales que se quieren utilizar
-  const material = [new THREE.MeshMatcapMaterial(color[0]),new THREE.MeshPhongMaterial(color[1]),new THREE.MeshToonMaterial(color[2])];     
-  return new THREE.Mesh(geometry, material[i]);
+  const material = new THREE.MeshMatcapMaterial(color[i]);     
+  return new THREE.Mesh(geometry, material);
 }
 
-var Cubo = []; 
+var Cubo = []; // Arreglo Vacio para añadir los cubos mas adelante
 var n = color.length; // Variable de Numero de cubos en base a la cantidad de colores existentes
-var lado = 1/2; //variable del lado del cubo
-var t = 1/2; // Variable para trasladar los cubos
-var h = 4;
 
-// Utilizar la misma variable para la traslación hace que el for funcione de manera erronea, por eso se usan dos variables iguales
-for (var i = 0; i < 2; i++) {
-    Cubo[i] = cubo(t, h, t, color[i]);
-    Cubo[i].position.x = t/2; 
-    Cubo[i].position.y = t*4;
-    Cubo[i].position.z = t/2;
-    // Se divide a la mitad el valor del cubo hasta que se complete el ciclo
+// Variables
+var base = 6; 
+var L = base;
+var altura = L/10; 
+
+var beta = Math.PI/8;
+var alfa = Math.PI/6;
+var gamma = 2*Math.PI;
+
+// for para añadir los cubos a la escena
+
+for (var i = 0; i < n; i++) { // El arreglo corre hasta N, para que se creen los cubos en función del numero de colores
+    Cubo[i] = cubo(altura, L, altura, color[i]); // Se añaden los parametros establecidos en las variables
+    scene.add(Cubo[i]) // Se añaden los cubos a la escena
 }
 
-// Se añade el cubo a la escena
-const group = new THREE.Group();
-for (i = 0; i < n; i++) {
-  scene.add(Cubo[i]);
+//  La función rotar permite realizar una rotación sobre el cubo en el eje deseado
+
+function Rotar( objeto, eje, angulo) { // objeto seria el Objeto que se va a rotar, eje es el eje sobre el cual rota y el angulo, es la rotación que tendra el objeto
+    
+  const quaternion = new THREE.Quaternion(); 
+  quaternion.setFromAxisAngle(eje, angulo);
+
+  objeto.quaternion.multiply(quaternion); 
+} 
+
+// Función para trasladar el cubo
+
+function TraslacionCubo( rectangulo, TX, TY, TZ) { // rectangulo es el objeto a utilizar, TX,TY,TZ son los ejes X,Y,Z en donde se va a trasladar el objeto
+  rectangulo.position.set(TX, TY, TZ)
 }
+
+// Traslaciones y rotaciones
+TraslacionCubo(Cubo[0], 0, L/2, 0);
+TraslacionCubo(Cubo[1], 0.257*L, 1.457*L, 0);
+Rotar(Cubo[1],z,-alfa)
+
+// Se agrupan las figuras
+const Cubos = new THREE.Group();
+Cubos.add(Cubo[0]);
+Cubos.add(Cubo[1]);
+scene.add(Cubos)
+
+// Rotación en ambos cubos para que se muevan en la misma dirección
+Rotar(Cubos, z, -beta);
+Cubos.rotation.y = gamma;
 
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
-
 function animate() {
 
   requestAnimationFrame(animate);
