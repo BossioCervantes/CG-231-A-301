@@ -87,7 +87,7 @@ function Rotar( objeto, eje, angulo) { // objeto seria el Objeto que se va a rot
 
 // Función para trasladar el cubo
 
-function TraslacionCubo( rectangulo, TX, TY, TZ) { // rectangulo es el objeto a utilizar, TX,TY,TZ son los ejes X,Y,Z en donde se va a trasladar el objeto
+function TraslacionCubo( rectangulo, TX, TY, TZ) { // rectangulo es el objeto a trasladar, TX,TY,TZ son los ejes X,Y,Z en donde se va a trasladar el objeto
   rectangulo.position.set(TX, TY, TZ)
 }
 
