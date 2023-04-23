@@ -32,9 +32,9 @@ var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB );
 // Posición de la camara
 
 var camera = new THREE.PerspectiveCamera(70, WIDTH / HEIGHT);
-camera.position.x = 0;
+camera.position.x = -2;
 camera.position.y = 5;
-camera.position.z = 10;
+camera.position.z = 17;
 scene.add(camera);
 const light = new THREE.AmbientLight(0x404040, 5);
 scene.add(light);
